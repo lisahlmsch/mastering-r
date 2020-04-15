@@ -36,29 +36,25 @@ library(jsonlite)
 library(binancer)
 library(jsonlite)
 library(logger)
+library(checkmate) 
+
 
 BITCOINS <- 0.42
 log_info("Number of Bitcoins: {BITCOINS}") #glue
-
-## TODO the Binance API is a bit of mess .. need to add retries => tryCatch
 
 get_bitcoin_price <- function() {
   tryCatch(
   binance_coins_prices()[symbol == 'BTC', usd],
   error = function(e) get_bitcoin_price())
 }
-get_bitcoin_price()
-
-# tryCatch(binance_coins_prices()[symbol == "BTC", usd],
-#          error = function(e) { # e is the error message
-#            binance_coins_prices()[symbol == "BTC", usd]
-#          }) 
 
 btcusdt <- binance_coins_prices()[symbol == "BTC", usd]
 log_info("Value of 1 BTC in USD: {btcusdt}")
+assert_number(btcusdt, lower = 1000) # makes sure this is a number and not lower than 1000
 
 usdhuf <- fromJSON("https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF")$rates$HUF
 log_info("Value of 1 USD in HUF: {usdhuf}")
+assert_number(usdhuf, lower = 250, upper = 500)
 
 BITCOINS * btcusdt * usdhuf
 

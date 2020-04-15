@@ -12,8 +12,6 @@ value
 
 # binance_coins_prices(unit = "USDT")[symbol == "BTC", usd]
 
-
-
 # = = = = = = = = = = = = = = = = = =
 # Report on the current price of 0.42 BTC in HUF
 
@@ -32,3 +30,24 @@ readLines("https://api.exchangeratesapi.io/latest?base=USD HTTP/1.1")
 library(binancer)
 library(jsonlite)
 0.42 * binance_coins_prices()[symbol == "BTC", usd] * fromJSON("https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF")$rates$HUF
+
+# = = = = = = = = = = = = = = = = = =
+# Improve script
+library(binancer)
+library(jsonlite)
+library(logger)
+
+BITCOINS <- 0.42
+log_info("Number of Bitcoins: {BITCOINS}") #glue
+
+## TODO the Binance API is a bit of mess .. need to add retries
+btcusdt <- binance_coins_prices()[symbol == "BTC", usd]
+log_info("Value of 1 BTC in USD: {btcusdt}")
+
+usdhuf <- fromJSON("https://api.exchangeratesapi.io/latest?base=USD&symbols=HUF")$rates$HUF
+log_info("Value of 1 USD in HUF: {usdhuf}")
+
+BITCOINS * btcusdt * usdhuf
+
+
+
